@@ -6,17 +6,17 @@ const pingServer = async () =>
 const getNewPassword = async () =>
 httpUtils.Get("/api/new-password");
 
-const sendPostApiWorld = async (body) => {
+const verifyPassword = async (body) => {
+  console.log(body)
   try {
-    return await httpUtils.Post("/api/world", body);
+    return await httpUtils.Post("/api/verify-password", body);
   } catch (error) {
     // console.error(error);
   }
 };
 
-
 export default {
     pingServer,
-    sendPostApiWorld,
     getNewPassword,
+    verifyPassword
 }

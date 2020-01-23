@@ -1,12 +1,24 @@
 const getNewPassword = () => {
-    let tmpArray = [];
-    while (tmpArray.length < 9) {
+    let tempArray = [];
+    while (tempArray.length < 9) {
         const randomNumber = Math.floor(Math.random() * 9) + 1;
-        if (tmpArray.indexOf(randomNumber) === -1) tmpArray.push(randomNumber);
+        if (tempArray.indexOf(randomNumber) === -1) tempArray.push(randomNumber);
     }
-    return tmpArray;
+    return tempArray;
 };
+
+const reversePassword = (passwordArray) => {
+    let tempArray = [].concat(passwordArray).reverse();
+    return tempArray;
+};
+
+const isPasswordCorrect = (correctPassword, guessedPassword) => {
+    return correctPassword === guessedPassword ? true : false;
+};
+
 
 module.exports = {
     getNewPassword,
+    reversePassword,
+    isPasswordCorrect
 }

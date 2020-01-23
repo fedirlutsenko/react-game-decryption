@@ -13,12 +13,14 @@ class App extends Component {
   };
   
   componentDidMount() {
+    serverUtils.getNewPassword();
   }
   
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await serverUtils.sendPostApiWorld({ post: this.state.post });
-    this.setState({ responseToPost: response.result });
+    const response = await serverUtils.verifyPassword({ answer: [1,2,3,4,5,6,7,8,9]});
+    console.log(response);
+    // this.setState({ responseToPost: response.result });
   };
   
 render() {
