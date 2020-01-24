@@ -14,9 +14,7 @@ const {
 } = require("../server/src/Utils/passwordUtils")
 
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({
-  extended: false
-})); // support encoded bodies
+app.use(bodyParser.urlencoded({extended: false})); // support encoded bodies
 app.use('/', router);
 
 app.get('/', (req, res) => {
@@ -43,12 +41,16 @@ app.get('/api/new-password', async (req, res) => {
 });
 
 app.post('/api/verify-password', async (req, res) => {
-  res.json({
-    correct: isPasswordCorrect(MemoryStore.getItem("password"), req.body.answer),
-    highlight: getHighlightedIndexes(MemoryStore.getItem("password"), req.body.answer),
-    hint: MemoryStore.getItem("hint"),
-    answer: req.body.answer,
-  });
+  try{
+    res.json({
+      correct: isPasswordCorrect(MemoryStore.getItem("password"), req.body.answer),
+      highlight: getHighlightedIndexes(MemoryStore.getItem("password"), req.body.answer),
+      hint: MemoryStore.getItem("hint"),
+      answer: req.body.answer,
+    });
+  } catch (e) {
+      console.error("Couldn't verify password" + e)
+    }
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

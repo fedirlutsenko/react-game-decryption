@@ -1,8 +1,8 @@
+import {Badge, Button, TextField} from "@material-ui/core";
 import React, {Component} from "react";
-import logo from "./iag.png";
-import "./App.css";
-import serverUtils from "./Utils/serverUtils";
-import {Button, TextField, Badge} from "@material-ui/core";
+import "./static-resources/app.css";
+import logo from "./static-resources/iag.png";
+import serverUtils from "./utility-helpers/serverUtils";
 
 class App extends Component {
   state = {
@@ -14,7 +14,7 @@ class App extends Component {
     textInputError: false
   };
 
-  bumpAttempt = () => {
+  bumpUserAttempts = () => {
     this.setState({userAttempts: this.state.userAttempts + 1});
   };
 
@@ -22,12 +22,12 @@ class App extends Component {
     return inputNumbers.toLocaleString().replace(/,\s*$/, "");
   };
 
-  setNewPassword = async () => {
+  getNewPassword = async () => {
     const passwordHint = await serverUtils.getNewPassword();
     this.setState({currentPasswordHint: passwordHint.hint.join("")});
   };
 
-  handleTextvalidation =(e) => {
+  handleTextvalidation = e => {
     const userText = e.target.value;
     this.setState({userGuess: userText});
     if (userText.match(/^[0-9]+$/) === null) {
@@ -35,7 +35,7 @@ class App extends Component {
     } else {
       this.setState({textInputError: false});
     }
-  }
+  };
 
   resetGame = () => {
     this.setState({
@@ -46,11 +46,11 @@ class App extends Component {
       userWon: false,
       textInputError: false
     });
-    this.setNewPassword();
+    this.getNewPassword();
   };
 
   async componentDidMount() {
-    this.setNewPassword();
+    this.getNewPassword();
   }
 
   handleSubmit = async e => {
@@ -58,7 +58,6 @@ class App extends Component {
 
     const userAttempt = Array.from(String(this.state.userGuess), Number);
     const response = await serverUtils.verifyPassword({answer: userAttempt});
-    console.log(Response)
     const userCorrectNumbers = this.formatNumbers(response.highlight);
 
     if (response.correct === true) {
@@ -71,7 +70,7 @@ class App extends Component {
         correctNumbers: userCorrectNumbers,
         userWon: false
       });
-      this.bumpAttempt();
+      this.bumpUserAttempts();
     }
   };
 
@@ -88,7 +87,7 @@ class App extends Component {
       userWon: false,
       textInputError: false
     });
-    this.setNewPassword();
+    this.getNewPassword();
   };
 
   render() {
