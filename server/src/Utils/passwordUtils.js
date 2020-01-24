@@ -1,7 +1,7 @@
 const getNewPassword = () => {
     let tempArray = [];
-    while (tempArray.length < 9) {
-        const randomNumber = Math.floor(Math.random() * 9) + 1;
+    while (tempArray.length <= 7) {
+        const randomNumber = Math.floor(Math.random() * 8) + 1;
         if (tempArray.indexOf(randomNumber) === -1) tempArray.push(randomNumber);
     }
     return tempArray;
@@ -13,12 +13,28 @@ const reversePassword = (passwordArray) => {
 };
 
 const isPasswordCorrect = (correctPassword, guessedPassword) => {
-    return correctPassword === guessedPassword ? true : false;
+    return JSON.stringify(correctPassword) === JSON.stringify(guessedPassword) ? true : false;
 };
+
+const getHighlightedIndexes = (correctPassword, guessedPassword) => {
+    let tempArrayOfIndexes = []
+    let tempCorrectNumbers = []
+
+    for (i = 0; i <= correctPassword.length; i++) {
+        if (correctPassword[i] === guessedPassword[i]) {
+                tempArrayOfIndexes.push(correctPassword.indexOf(correctPassword[i]))
+        }
+    }
+    tempArrayOfIndexes.forEach((index) => {
+        tempCorrectNumbers.push(guessedPassword[index])
+    })
+    return tempCorrectNumbers;
+}
 
 
 module.exports = {
     getNewPassword,
     reversePassword,
-    isPasswordCorrect
+    isPasswordCorrect,
+    getHighlightedIndexes,
 }

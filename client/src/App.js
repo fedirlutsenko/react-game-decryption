@@ -1,58 +1,151 @@
-import React, { Component } from 'react';
-
-import logo from './logo.svg';
-
-import './App.css';
-import serverUtils from './Utils/serverUtils';
+import React, {Component} from "react";
+import logo from "./iag.png";
+import "./App.css";
+import serverUtils from "./Utils/serverUtils";
+import {Button, TextField, Badge} from "@material-ui/core";
 
 class App extends Component {
   state = {
-    response: '',
-    post: '',
-    responseToPost: '',
+    correctNumbers: "",
+    userGuess: "",
+    currentPasswordHint: "",
+    userAttempts: 0,
+    userWon: false,
+    textInputError: false
   };
-  
-  componentDidMount() {
-    serverUtils.getNewPassword();
+
+  bumpAttempt = () => {
+    this.setState({userAttempts: this.state.userAttempts + 1});
+  };
+
+  formatNumbers = inputNumbers => {
+    return inputNumbers.toLocaleString().replace(/,\s*$/, "");
+  };
+
+  setNewPassword = async () => {
+    const passwordHint = await serverUtils.getNewPassword();
+    this.setState({currentPasswordHint: passwordHint.hint.join("")});
+  };
+
+  handleTextvalidation =(e) => {
+    const userText = e.target.value;
+    this.setState({userGuess: userText});
+    if (userText.match(/^[0-9]+$/) === null) {
+      this.setState({textInputError: true});
+    } else {
+      this.setState({textInputError: false});
+    }
   }
-  
+
+  resetGame = () => {
+    this.setState({
+      correctNumbers: "",
+      userGuess: "",
+      currentPasswordHint: "",
+      userAttempts: 0,
+      userWon: false,
+      textInputError: false
+    });
+    this.setNewPassword();
+  };
+
+  async componentDidMount() {
+    this.setNewPassword();
+  }
+
   handleSubmit = async e => {
     e.preventDefault();
-    const response = await serverUtils.verifyPassword({ answer: [1,2,3,4,5,6,7,8,9]});
-    console.log(response);
-    // this.setState({ responseToPost: response.result });
+
+    const userAttempt = Array.from(String(this.state.userGuess), Number);
+    const response = await serverUtils.verifyPassword({answer: userAttempt});
+    console.log(Response)
+    const userCorrectNumbers = this.formatNumbers(response.highlight);
+
+    if (response.correct === true) {
+      this.setState({
+        correctNumbers: "All digits",
+        userWon: true
+      });
+    } else {
+      this.setState({
+        correctNumbers: userCorrectNumbers,
+        userWon: false
+      });
+      this.bumpAttempt();
+    }
   };
-  
-render() {
+
+  handleTextChange = e => {
+    this.handleTextvalidation(e);
+  };
+
+  resetGame = () => {
+    this.setState({
+      correctNumbers: "",
+      userGuess: "",
+      currentPasswordHint: "",
+      userAttempts: 0,
+      userWon: false,
+      textInputError: false
+    });
+    this.setNewPassword();
+  };
+
+  render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <h1 className="App-header-font">
+            Welcome to the password decryption game!
+          </h1>
         </header>
-        <p>{this.state.response}</p>
         <form onSubmit={this.handleSubmit}>
           <p>
-            <strong>Post to Server:</strong>
+            <strong>Password hint: </strong>
+            <span>{this.state.currentPasswordHint}</span>
           </p>
-          <input
-            type="text"
-            value={this.state.post}
-            onChange={e => this.setState({ post: e.target.value })}
-          />
-          <button type="submit">Submit</button>
+          <div className="formDiv">
+            <TextField
+              id="outlined-basic"
+              label="Enter 8 Numbers"
+              variant="outlined"
+              error={this.state.textInputError}
+              value={this.state.userGuess}
+              onChange={e => this.handleTextChange(e)}
+            />
+            <Badge
+              color="error"
+              badgeContent={this.state.userAttempts}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right"
+              }}
+            ></Badge>
+            <Button
+              variant="contained"
+              id="submitButton"
+              disabled={
+                this.state.userGuess.length !== 8 || this.state.textInputError
+              }
+              type="submit"
+            >
+              Submit
+            </Button>
+          </div>
         </form>
-        <p>{this.state.responseToPost}</p>
+        <p hidden={!this.state.correctNumbers}>
+          You've got {this.state.correctNumbers} In the correct positions!
+        </p>
+        <div hidden={!this.state.userWon}>
+          <Button
+            variant="contained"
+            type="submit"
+            onClick={e => this.resetGame()}
+          >
+            Would you like to play again?
+          </Button>
+        </div>
       </div>
     );
   }
