@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import "./static-resources/app.css";
 import logo from "./static-resources/iag.png";
 import serverUtils from "./utility-helpers/serverUtils";
+import Confetti from "react-dom-confetti";
+import generalUtils from "./utility-helpers/generalUtils";
 
 class App extends Component {
   state = {
@@ -144,6 +146,9 @@ class App extends Component {
           >
             Would you like to play again?
           </Button>
+          <div className="confettiAlign">
+            <Confetti active={this.state.userWon} config={generalUtils.returnConfettiConfig()} />
+          </div>
         </div>
       </div>
     );
