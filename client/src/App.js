@@ -29,7 +29,7 @@ class App extends Component {
     this.setState({currentPasswordHint: passwordHint.hint.join("")});
   };
 
-  handleTextvalidation = e => {
+  handleTextValidation = e => {
     const userText = e.target.value;
     this.setState({userGuess: userText});
     if (userText.match(/^[0-9]+$/) === null) {
@@ -77,19 +77,7 @@ class App extends Component {
   };
 
   handleTextChange = e => {
-    this.handleTextvalidation(e);
-  };
-
-  resetGame = () => {
-    this.setState({
-      correctNumbers: "",
-      userGuess: "",
-      currentPasswordHint: "",
-      userAttempts: 0,
-      userWon: false,
-      textInputError: false
-    });
-    this.getNewPassword();
+    this.handleTextValidation(e);
   };
 
   render() {
